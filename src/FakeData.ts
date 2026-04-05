@@ -9,7 +9,7 @@ const AdjacentNodes = new Map<string, Set<string>>([
     ["Florida", new Set(["Alabama", "Georgia", "Puerto Rico"])],
     ["Georgia", new Set(["Alabama", "Tennessee", "Florida", "South Carolina"])],
     ["Hawaii", new Set(["Alaska", "California"])],
-    ["Idaho", new Set(["Washington", "Oregon", "Nevada", "Utah"])],
+    ["Idaho", new Set(["Washington", "Oregon", "Nevada", "Utah", "Montana"])],
     ["Illinois", new Set(["Wisconsin", "Iowa", "Indiana"])],
     ["Indiana", new Set(["Michigan", "Illinois", "Ohio"])],
     ["Iowa", new Set(["Minnesota", "Dakotas", "Nebraska", "Missouri", "Illinois"])],

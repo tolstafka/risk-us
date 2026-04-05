@@ -1,9 +1,17 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import RiskMap from "./mapv2.svg?react";
+import MiniMap from "./assets/minimap2.svg?react";
 import AdjacentNodes from "./FakeData";
 import "./App.css";
 
 function App() {
+    const [controlledTerritoryIDs, setControlledTerritoryIDs] = useState([
+        "Alaska",
+        "California",
+        "Oregon",
+        "Puerto Rico",
+        "West Virginia",
+    ]);
     const [selectedTerritoryID, setSelectedTerritoryID] = useState("");
 
     const neighborIDs = useMemo(
@@ -29,10 +37,17 @@ function App() {
     }
 
     const svgRef = useRef<SVGSVGElement | null>(null);
+    const miniMapRef = useRef<SVGSVGElement | null>(null); // add this
+    const controlledSet = useMemo(
+        () => new Set(controlledTerritoryIDs),
+        [controlledTerritoryIDs],
+    );
 
     useEffect(() => {
         const svg = svgRef.current;
-        if (!svg) return;
+        const mini = miniMapRef.current;
+
+        if (!svg || !mini) return;
         const allLabels =
             svg.querySelectorAll<SVGTextElement>('text[id^="Label"]');
         allLabels.forEach((label) => label.removeAttribute("data-highlight"));
@@ -79,12 +94,33 @@ function App() {
             if (selectedLabel)
                 selectedLabel.setAttribute("data-highlight", "selected");
         }
-    }, [neighborIDs, selectedTerritoryID]);
+
+        ////////// minimap
+
+        const miniTerritories = mini.querySelectorAll<SVGPathElement>(
+            "g#RiskMapV2-2 path[id]",
+        );
+
+        miniTerritories.forEach((path) => {
+            const id = path.getAttribute("id");
+            if (!id) return;
+
+            path.setAttribute(
+                "data-control",
+                controlledSet.has(id) ? "controlled" : "enemy",
+            );
+        });
+    }, [neighborIDs, selectedTerritoryID, controlledSet]);
 
     return (
         <main>
-            <p>selected {selectedTerritoryID}</p>
-            <RiskMap ref={svgRef} onClick={handleMapClick} className="mapSVG" />
+            <div className="mapFrame">
+              <RiskMap ref={svgRef} onClick={handleMapClick} className="mapSVG" />
+              <div className="miniMapFrame">
+                <MiniMap ref={miniMapRef} className="miniMapSVG" />
+              </div>
+            </div>
+            <p className="status">{`${selectedTerritoryID.toUpperCase()} ${selectedTerritoryID ? "TERRITORY" : ""}`}</p>
         </main>
     );
 }

@@ -2,15 +2,43 @@
   cursor: url("./assets/cursor_custom.svg"), auto;
 } */
 
+.mapFrame {
+  position: relative;
+  width: 90vw;
+  height: 90vh;
+}
+
 .mapSVG {
-  background-color:white;
-  padding:1em;
-  width:90vw;
-  height:90vh;
-  user-select: none; 
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-color: white;
+  padding: 1em;
+  user-select: none;
+}
+
+.miniMapFrame {
+  position: absolute;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  display: inline-block;
+  padding: 0.35rem;
+  border: 1px dotted #000;
+  background: #fff;
+  z-index: 10;
+}
+
+.miniMapSVG {
+  position: static;
+  display: block;
+  width: 15vw;
+  max-width: 220px;
+  min-width: 120px;
+  height: auto;
 }
 
 main {
+  position: relative;
   cursor: url("./assets/cursor2.svg"), auto;
 }
 
@@ -58,3 +86,23 @@ text > tspan {
 /* .mapSVG text[data-highlight="neighbor"] tspan {
   
 } */
+
+.status {
+  text-align: center;
+  font-family: Palatino, "Palatino Linotype", "Book Antiqua", serif;
+  font-style: italic;
+  letter-spacing: 2px;
+}
+
+.miniMapSVG g#RiskMapV2-2 path[id] {
+  fill: #ffffff;
+  transition: fill 180ms ease;
+}
+
+.miniMapSVG g#RiskMapV2-2 path[data-control="controlled"] {
+  fill: #346f34;
+}
+
+.miniMapSVG g#RiskMapV2-2 path[data-control="enemy"] {
+  fill: #bf5c5c;
+}
