@@ -87,6 +87,8 @@ main {
 
 .mapSVG text {
   white-space: normal;
+  font-family: Palatino, "Palatino Linotype", "Book Antiqua", serif;
+  font-size: 4px !important;
 }
 
 .mapSVG path[data-control="enemy"] {
@@ -149,15 +151,15 @@ text > tspan {
   letter-spacing: 2px;
 }
 
-.miniMapSVG g#RiskMapV2-2 path[id] {
+.miniMapSVG g#RiskMap-2 path[id] {
   fill: #ffffff;
   transition: fill 180ms ease;
 }
 
-.miniMapSVG g#RiskMapV2-2 path[data-control="controlled"] {
+.miniMapSVG g#RiskMap-2 path[data-control="controlled"] {
   fill: #346f34;
 }
 
-.miniMapSVG g#RiskMapV2-2 path[data-control="enemy"] {
+.miniMapSVG g#RiskMap-2 path[data-control="enemy"] {
   fill: #bf5c5c;
 }

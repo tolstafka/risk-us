@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import RiskMap from "./mapv2.svg?react";
+import RiskMap from "./map.svg?react";
 import MiniMap from "./assets/minimap2.svg?react";
 import AdjacentNodes from "./FakeData";
 import "./App.css";
@@ -193,7 +193,7 @@ function App() {
         ////////// minimap
 
         const miniTerritories = mini.querySelectorAll<SVGPathElement>(
-            "g#RiskMapV2-2 path[id]",
+            "g#RiskMap-2 path[id]",
         );
 
         miniTerritories.forEach((path) => {
