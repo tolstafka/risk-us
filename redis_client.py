@@ -4,12 +4,12 @@ import os
 
 load_dotenv()
 
-HOST = os.getenv("REDIS_HOSTNAME")
-PORT = os.getenv("REDIS_PATH")
 
 r = redis.Redis(
-    host=HOST,
-    port=PORT,
+    host=os.getenv("REDIS_HOSTNAME"),
+    port=os.getenv("REDIS_PORT"),
+    username=os.getenv("REDIS_USERNAME"),
+    password=os.getenv("REDIS_PASSWORD"),
     db=0,
     decode_responses=True,
 )
