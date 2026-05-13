@@ -77,7 +77,7 @@ async function requestJson(url, options = {}) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Request failed.");
+    throw new Error(data.error || "Request has failed.");
   }
 
   return data;
@@ -139,7 +139,7 @@ function setupGameHome() {
     }
 
     if (!isValidGameId(gameId)) {
-      setGameHomeMessage("Enter a valid 6-character game ID.");
+      setGameHomeMessage("Please enter a valid 6-character game ID.");
 
       return;
     }
@@ -160,7 +160,7 @@ async function enterGameLobby() {
       body: JSON.stringify({}),
     });
 
-    setGamePageMessage("Youhave entered the lobby.");
+    setGamePageMessage("You have entered the lobby.");
   } catch (error) {
     setGamePageMessage(error.message);
     enterGameButton.disabled = false;
