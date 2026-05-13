@@ -10,12 +10,52 @@
     <main>
       <section id="home-page">
         <h1>Risk V Lobby</h1>
+      
+      <section id="game-home">
+        <p>
+          <button id="host-game-button" type="button">Host game</button>
+        </p>
+
+        <form id="game-join-form">
+          <label for="game-id-input">Game ID:</label>
+          <input
+            id="game-id-input"
+            name="gameId"
+            type="text"
+            maxlength="6"
+            autocomplete="off"
+            required
+          />
+          <button type="submit">Join game</button>
+        </form>
+
+        <p id="game-home-message" aria-live="polite"></p>
+      </section>
+
         <p>Choose a room:</p>
         <ul>
           <li><a href="/room/1">Room 1</a></li>
           <li><a href="/room/2">Room 2</a></li>
           <li><a href="/room/3">Room 3</a></li>
         </ul>
+      </section>
+      
+      <section id="game-page" hidden>
+        <p><a href="/">Back to home</a></p>
+        <h1>Game <span id="game-id-label"></span></h1>
+
+        <p id="game-page-status" aria-live="polite"></p>
+
+        <p>
+          Share this URL:
+          <a id="game-link" href=""></a>
+        </p>
+
+        <p>
+          <button id="enter-game-button" type="button">Enter lobby</button>
+        </p>
+
+        <p id="game-page-message" aria-live="polite"></p>
       </section>
 
       <section id="room-page" hidden>

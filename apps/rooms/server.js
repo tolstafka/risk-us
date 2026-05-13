@@ -11,6 +11,11 @@ const HEARTBEAT_CLEANUP_MS = 5_000;
 const SSE_PING_MS = 20_000;
 
 const PUBLIC_DIR = path.join(__dirname, "public");
+
+const GAME_ID_LENGTH = 6;
+const GAME_ID_PATTERN = /^[A-Z0-9]{6}$/;
+const games = new Map();
+
 const rooms = new Map(
   Array.from(ROOM_IDS, (roomId) => [roomId, new Map()]),
 );
@@ -89,6 +94,46 @@ function sanitizeName(name) {
   return name.trim().replace(/\s+/g, " ").slice(0, 32);
 }
 
+function isValidGameId(gameId) {
+  return typeof gameId === "string" && GAME_ID_PATTERN.test(gameId);
+}
+
+function generateGameId() {
+  let gameId = "";
+
+  do {
+    gameId = crypto
+      .randomBytes(4)
+      .toString("hex")
+      .slice(0, GAME_ID_LENGTH)
+      .toUpperCase();
+  } while (games.has(gameId));
+
+  return gameId;
+}
+
+//NOTE TO SELF: When we implement Redis, imma work on this later
+function getGame(gameId) {
+  return games.get(gameId) || null;
+}
+
+function saveGame(game) {
+  games.set(game.id, game);
+  return game;
+}
+
+function gameSnapshot(gameId) {
+  const game = getGame(gameId);
+  if (!game) {
+    return null;
+  }
+
+  return {
+    gameId: game.id,
+    createdAt: game.createdAt,
+  };
+}
+
 function roomSnapshot(roomId) {
   const room = rooms.get(roomId);
   const users = Array.from(room.values())
@@ -140,6 +185,11 @@ function handleHome(requestPath, response) {
     return true;
   }
 
+  if (/^\/game\/[^/]+\/?$/.test(requestPath)) {
+    serveFile(path.join(PUBLIC_DIR, "index.html"), response);
+    return true;
+  }
+
   return false;
 }
 
@@ -168,6 +218,51 @@ function serveStatic(requestPath, response) {
   }
 
   serveFile(filePath, response);
+}
+
+function handleCreateGame(response) {
+
+  const gameId = generateGameId();
+
+  saveGame({
+    id: gameId,
+    createdAt: Date.now(),
+  });
+
+  sendJson(response, 201, {
+    gameId,
+    url: `/game/${gameId}`,
+  });
+
+}
+
+function handleGetGame(response, gameId) {
+  const snapshot = gameSnapshot(gameId);
+
+  if (!snapshot) {
+    sendJson(response, 404, { error: "Game not found." });
+
+    return;
+  }
+
+  sendJson(response, 200, snapshot);
+}
+
+async function handleJoinGame(request, response, gameId) {
+  const snapshot = gameSnapshot(gameId);
+
+  if (!snapshot) {
+    sendJson(response, 404, { error: "Game not found." });
+
+    return;
+  }
+
+  await readJson(request);
+
+  sendJson(response, 200, {
+    ok: true,
+    gameId,
+  });
 }
 
 async function handleJoin(request, response, roomId) {
@@ -246,6 +341,42 @@ function handleEvents(request, response, roomId, url) {
 }
 
 async function handleApi(request, response, url) {
+
+  if (url.pathname === "/api/games" && request.method === "POST") {
+    handleCreateGame(response);
+    return;
+  }
+
+  const gameMatch = url.pathname.match(/^\/api\/games\/([^/]+?)(?:\/(join))?\/?$/);
+
+  if (gameMatch) {
+    const rawGameId = gameMatch[1];
+    const action = gameMatch[2] || null;
+    const gameId = rawGameId.toUpperCase();
+
+    if (!isValidGameId(gameId)) {
+      sendJson(response, 400, { error: "Invalid game ID." });
+      
+      return;
+    }
+
+    if (!action && request.method === "GET") {
+      handleGetGame(response, gameId);
+
+      return;
+    }
+
+    if (action === "join" && request.method === "POST") {
+      await handleJoinGame(request, response, gameId);
+
+      return;
+    }
+
+    sendJson(response, 405, { error: "Not allowed." });
+
+    return;
+  }
+
   const match = url.pathname.match(/^\/api\/rooms\/([123])\/(join|heartbeat|leave|events)$/);
   if (!match) {
     sendJson(response, 404, { error: "Not found." });
