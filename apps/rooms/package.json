@@ -1,0 +1,9 @@
+{
+  "name": "three-room-presence",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal three-room realtime presence demo",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
